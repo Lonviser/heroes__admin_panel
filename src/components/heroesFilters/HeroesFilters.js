@@ -1,26 +1,71 @@
-
-// Задача для этого компонента:
-// Фильтры должны формироваться на основании загруженных данных
-// Фильтры должны отображать только нужных героев при выборе
-// Активный фильтр имеет класс active
-// Изменять json-файл для удобства МОЖНО!
-// Представьте, что вы попросили бэкенд-разработчика об этом
+// HeroesFilters.js
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchFilters, setActiveFilter } from '../../actions';
 
 const HeroesFilters = () => {
+    const { filters, activeFilter } = useSelector(state => ({
+        filters: state.filters,
+        activeFilter: state.activeFilter
+    }));
+    
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(fetchFilters());
+    }, [dispatch]);
+
+    const onFilterSelect = (filter) => {
+        dispatch(setActiveFilter(filter));
+    };
+
+    const renderFilters = (filters) => {
+        if (filters.length === 0) {
+            return <h5>Фильтры не найдены</h5>;
+        }
+
+        const filterNames = {
+            'all': 'Все',
+            'fire': 'Огонь',
+            'water': 'Вода',
+            'wind': 'Ветер',
+            'earth': 'Земля'
+        };
+
+        const filterClasses = {
+            'all': 'btn-outline-dark',
+            'fire': 'btn-danger',
+            'water': 'btn-primary',
+            'wind': 'btn-success',
+            'earth': 'btn-secondary'
+        };
+
+        return filters.map(filter => {
+            const btnClass = `btn ${filterClasses[filter]} ${activeFilter === filter ? 'active' : ''}`;
+            return (
+                <button 
+                    key={filter}
+                    className={btnClass}
+                    onClick={() => onFilterSelect(filter)}
+                >
+                    {filterNames[filter]}
+                </button>
+            );
+        });
+    };
+
+    const elements = renderFilters(filters);
+
     return (
         <div className="card shadow-lg mt-4">
             <div className="card-body">
                 <p className="card-text">Отфильтруйте героев по элементам</p>
                 <div className="btn-group">
-                    <button className="btn btn-outline-dark active">Все</button>
-                    <button className="btn btn-danger">Огонь</button>
-                    <button className="btn btn-primary">Вода</button>
-                    <button className="btn btn-success">Ветер</button>
-                    <button className="btn btn-secondary">Земля</button>
+                    {elements}
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default HeroesFilters;
