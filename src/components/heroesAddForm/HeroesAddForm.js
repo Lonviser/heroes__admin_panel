@@ -13,28 +13,38 @@ import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { heroAdded } from "../../actions";
+import {useHttp} from '../../hooks/http.hook';
+
 
 const HeroesAddForm = () => {
     const dispatch = useDispatch();
     const [heroName, setHeroName] = useState('');
     const [description, setDescription] = useState('');
     const [element, setElement] = useState('');
-
+    const {request} = useHttp();
+    
         const handleSubmit = (e) => {
             e.preventDefault();
-            const hero = {
+            const newHero = {
                 id: uuidv4(),
                 name: heroName,
                 description,
                 element
             }
 
-            dispatch(heroAdded(hero));
+            request("http://localhost:3001/heroes", "POST", JSON.stringify(newHero))
+                .then(()=>{
+                    dispatch(heroAdded(newHero));
+                })
+                .catch(err => {
+                    console.error("Ошибка при добавлении героя:", err);
+                });
 
             setHeroName('');
             setDescription('');
             setElement('');
         }
+
 
     return (
         <form onSubmit={handleSubmit} className="border p-4 shadow-lg rounded">
