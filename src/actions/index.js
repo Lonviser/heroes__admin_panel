@@ -1,4 +1,12 @@
 // actions.js
+
+export const fetchHeroes = (request) => (dispatch) => {
+    dispatch(heroesFetching());
+    fetch("http://localhost:3001/heroes")
+        .then(response => response.json())
+        .then(data => dispatch(heroesFetched(data)))
+        .catch(() => dispatch(heroesFetchingError()));
+}
 export const heroesFetching = () => {
     return {
         type: 'HEROES_FETCHING'
@@ -47,7 +55,7 @@ export const setActiveFilter = (filter) => {
         payload: filter
     };
 };
-
+ 
 // Асинхронный экшен для загрузки фильтров (теперь это thunk)
 export const fetchFilters = () => (dispatch) => {
     // Имитируем запрос к серверу
