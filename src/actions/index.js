@@ -1,43 +1,19 @@
-// actions.js
+// actions/index.js
+import { createAction } from "@reduxjs/toolkit";
 
-export const fetchHeroes = (request) => (dispatch) => {
+export const heroesFetching = createAction('HEROES_FETCHING');
+export const heroesFetched = createAction('HEROES_FETCHED');
+export const heroesFetchingError = createAction('HEROES_FETCHING_ERROR');
+export const heroDeleted = createAction('HERO_DELETED');
+export const heroAdded = createAction('HERO_ADDED');
+
+// Асинхронный экшен для загрузки героев
+export const fetchHeroes = () => (dispatch) => {
     dispatch(heroesFetching());
     fetch("http://localhost:3001/heroes")
         .then(response => response.json())
         .then(data => dispatch(heroesFetched(data)))
         .catch(() => dispatch(heroesFetchingError()));
-}
-export const heroesFetching = () => {
-    return {
-        type: 'HEROES_FETCHING'
-    };
-};
-
-export const heroesFetched = (heroes) => {
-    return {
-        type: 'HEROES_FETCHED',
-        payload: heroes
-    };
-};
-
-export const heroesFetchingError = () => {
-    return {
-        type: 'HEROES_FETCHING_ERROR'
-    };
-};
-
-export const heroDeleted = (id) => {
-    return {
-        type: 'HERO_DELETED',
-        payload: id
-    };
-};
-
-export const heroAdded = (hero) => {
-    return {
-        type: 'HERO_ADDED',
-        payload: hero
-    };
 };
 
 // Синхронный экшен для получения фильтров
@@ -55,10 +31,9 @@ export const setActiveFilter = (filter) => {
         payload: filter
     };
 };
- 
-// Асинхронный экшен для загрузки фильтров (теперь это thunk)
+
+// Асинхронный экшен для загрузки фильтров
 export const fetchFilters = () => (dispatch) => {
-    // Имитируем запрос к серверу
     fetch("http://localhost:3001/filters")
         .then(response => response.json())
         .then(data => dispatch(filtersFetched(data)))

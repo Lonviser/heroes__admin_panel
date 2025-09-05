@@ -1,5 +1,5 @@
+// reducers/filters.js
 const initialState = {
-
     filters: [],
     activeFilter: 'all' 
 };

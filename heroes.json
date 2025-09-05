@@ -17,6 +17,12 @@
       "name": "Иван",
       "description": "Загадочный",
       "element": "wind"
+    },
+    {
+      "id": "e6a57502-736a-45d0-bbdd-bbf8d7287f80",
+      "name": "231",
+      "description": "дббь",
+      "element": "earth"
     }
   ],
   "filters": [
