@@ -1,29 +1,32 @@
-// HeroesFilters.js
+// src/components/heroesFilters/HeroesFilters.js
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchFilters, setActiveFilter } from '../../actions';
 
 const HeroesFilters = () => {
-    const { filters, activeFilter } = useSelector(state => ({
-        filters: state.filters,
-        activeFilter: state.activeFilter
-    }));
+    // Обновленные селекторы для работы с разделенным состоянием
+    const { filters } = useSelector(state => state.filters);
+    const { activeFilter } = useSelector(state => state.filters);
     
     const dispatch = useDispatch();
 
     useEffect(() => {
+        // Загружаем фильтры при монтировании компонента
         dispatch(fetchFilters());
     }, [dispatch]);
 
+    // Обработчик смены активного фильтра
     const onFilterSelect = (filter) => {
         dispatch(setActiveFilter(filter));
     };
 
+    // Функция для рендеринга кнопок фильтров
     const renderFilters = (filters) => {
         if (filters.length === 0) {
             return <h5>Фильтры не найдены</h5>;
         }
 
+        // Маппинг фильтров на русские названия
         const filterNames = {
             'all': 'Все',
             'fire': 'Огонь',
@@ -32,6 +35,7 @@ const HeroesFilters = () => {
             'earth': 'Земля'
         };
 
+        // Маппинг классов кнопок
         const filterClasses = {
             'all': 'btn-outline-dark',
             'fire': 'btn-danger',

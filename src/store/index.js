@@ -1,9 +1,10 @@
-import { createStore, applyMiddleware } from 'redux';
-import reducer from '../reducers';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { thunk } from 'redux-thunk';
+import heroes from '../reducers/heroes';
+import filters from '../reducers/filters';
 
 const store = createStore(
-    reducer,
+    combineReducers({heroes, filters}),
     applyMiddleware(thunk)
 );
 

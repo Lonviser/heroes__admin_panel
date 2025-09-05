@@ -1,18 +1,30 @@
-// HeroesList.js
+// src/components/heroesList/HeroesList.js
 import { useHttp } from '../../hooks/http.hook';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { createSelector } from 'reselect';
 import { heroesFetching, heroesFetched, heroesFetchingError, heroDeleted } from '../../actions';
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
 
+// Создаем мемоизированный селектор вне компонента
+const filteredHeroesSelector = createSelector(
+    [
+        (state) => state.heroes.heroes,     // heroes
+        (state) => state.filters.activeFilter  // activeFilter
+    ],
+    (heroes, activeFilter) => {
+        if (activeFilter === 'all') {
+            return heroes;
+        } else {
+            return heroes.filter(hero => hero.element === activeFilter);
+        }
+    }
+);
+
 const HeroesList = () => {
-    const { heroes, heroesLoadingStatus, activeFilter } = useSelector(state => ({
-        heroes: state.heroes,
-        heroesLoadingStatus: state.heroesLoadingStatus,
-        activeFilter: state.activeFilter
-    }));
+    const heroesLoadingStatus = useSelector(state => state.heroes.heroesLoadingStatus);
+    const filteredHeroes = useSelector(filteredHeroesSelector);
     
     const dispatch = useDispatch();
     const { request } = useHttp();
@@ -40,10 +52,6 @@ const HeroesList = () => {
     } else if (heroesLoadingStatus === "error") {
         return <h5 className="text-center mt-5">Ошибка загрузки</h5>;
     }
-
-    const filteredHeroes = activeFilter === 'all' 
-        ? heroes 
-        : heroes.filter(hero => hero.element === activeFilter);
 
     const renderHeroesList = (arr) => {
         if (arr.length === 0) {
