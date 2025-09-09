@@ -3,10 +3,10 @@ import { useHttp } from '../../hooks/http.hook';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import {fetchHeroes, heroDeleted } from '../../actions';
+import {fetchHeroes } from '../../actions';
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
-
+import { heroDeleted } from './heroesSlice';
 // Создаем мемоизированный селектор вне компонента
 const filteredHeroesSelector = createSelector(
     [
