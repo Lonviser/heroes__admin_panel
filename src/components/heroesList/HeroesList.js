@@ -3,14 +3,17 @@ import { useHttp } from '../../hooks/http.hook';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
-import {fetchHeroes } from '../../actions';
+import { fetchHeroes } from '../../actions';
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
 import { heroDeleted } from './heroesSlice';
-// Создаем мемоизированный селектор вне компонента
+import { heroesSelectors } from './heroesSlice'; // Импортируем селекторы адаптера
+
+// Создаем мемоизированный селектор
 const filteredHeroesSelector = createSelector(
     [
-        (state) => state.heroes.heroes,     // heroes
+        // Получаем всех героев через селектор адаптера
+        (state) => heroesSelectors.selectAll(state), // теперь это массив героев
         (state) => state.filters.activeFilter  // activeFilter
     ],
     (heroes, activeFilter) => {
@@ -34,12 +37,13 @@ const HeroesList = () => {
     }, []);
 
     const handleDelete = (id) => {
-        request(`http://localhost:3001/heroes/${id}`, "DELETE").then(() => {
-            dispatch(heroDeleted(id));
-        })
-        .catch(err => {
-            console.error("Ошибка удаления, ", err);
-        });
+        request(`http://localhost:3001/heroes/${id}`, "DELETE")
+            .then(() => {
+                dispatch(heroDeleted(id)); // id передаётся напрямую
+            })
+            .catch(err => {
+                console.error("Ошибка удаления, ", err);
+            });
     };
 
     if (heroesLoadingStatus === "loading") {
