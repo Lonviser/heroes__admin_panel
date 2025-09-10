@@ -1,54 +1,36 @@
 // src/components/heroesList/HeroesList.js
-import { useHttp } from '../../hooks/http.hook';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
-import { fetchHeroes } from '../../actions';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { useGetHeroesQuery, useDeleteHeroMutation } from '../../api/apiSlice';
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
-import { heroDeleted } from './heroesSlice';
-import { heroesSelectors } from './heroesSlice'; // Импортируем селекторы адаптера
-
-// Создаем мемоизированный селектор
-const filteredHeroesSelector = createSelector(
-    [
-        // Получаем всех героев через селектор адаптера
-        (state) => heroesSelectors.selectAll(state), // теперь это массив героев
-        (state) => state.filters.activeFilter  // activeFilter
-    ],
-    (heroes, activeFilter) => {
-        if (activeFilter === 'all') {
-            return heroes;
-        } else {
-            return heroes.filter(hero => hero.element === activeFilter);
-        }
-    }
-);
 
 const HeroesList = () => {
-    const heroesLoadingStatus = useSelector(state => state.heroes.heroesLoadingStatus);
-    const filteredHeroes = useSelector(filteredHeroesSelector);
-    
-    const dispatch = useDispatch();
-    const { request } = useHttp();
+    const {
+        data: heroes = [],
+        isLoading,
+        isError,
+    } = useGetHeroesQuery();
 
-    useEffect(() => {
-        dispatch(fetchHeroes(request));
-    }, []);
+    const [deleteHero] = useDeleteHeroMutation(); 
 
-    const handleDelete = (id) => {
-        request(`http://localhost:3001/heroes/${id}`, "DELETE")
-            .then(() => {
-                dispatch(heroDeleted(id)); // id передаётся напрямую
-            })
+    const activeFilter = useSelector(state => state.filters.activeFilter);
+
+    const filteredHeroes = heroes.filter(hero => {
+        return activeFilter === 'all' ? true : hero.element === activeFilter;
+    });
+
+    const handleDelete = useCallback((id) => {
+        deleteHero(id) 
+            .unwrap()  
             .catch(err => {
-                console.error("Ошибка удаления, ", err);
+                console.error("Ошибка удаления героя:", err);
             });
-    };
+    }, [deleteHero]);
 
-    if (heroesLoadingStatus === "loading") {
+    if (isLoading) {
         return <Spinner />;
-    } else if (heroesLoadingStatus === "error") {
+    } else if (isError) {
         return <h5 className="text-center mt-5">Ошибка загрузки</h5>;
     }
 
@@ -57,22 +39,19 @@ const HeroesList = () => {
             return <h5 className="text-center mt-5">Героев пока нет</h5>;
         }
 
-        return arr.map(({ id, ...props }) => {
-            return <HeroesListItem 
+        return arr.map(({ id, ...props }) => (
+            <HeroesListItem
                 key={id}
                 id={id}
                 {...props}
-                onDelete={() => handleDelete(id)} />
-        });
+                onDelete={() => handleDelete(id)}
+            />
+        ));
     };
 
     const elements = renderHeroesList(filteredHeroes);
-    
-    return (
-        <ul>
-            {elements}
-        </ul>
-    );
+
+    return <ul>{elements}</ul>;
 };
 
 export default HeroesList;

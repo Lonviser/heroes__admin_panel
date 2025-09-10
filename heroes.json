@@ -1,22 +1,22 @@
 {
   "heroes": [
     {
-      "id": 1,
-      "name": "Первый герой",
-      "description": "Первый герой в рейтинге!",
+      "id": "b48d4b24-c7f5-472d-953e-89d5e2856315",
+      "name": "Lonviser",
+      "description": "цу",
       "element": "fire"
     },
     {
-      "id": 3,
-      "name": "Морской герой",
-      "description": "Как аквамен, но не из DC",
-      "element": "water"
+      "id": "086eb523-dc09-4ec9-90a8-2080167e36c6",
+      "name": "ыв",
+      "description": "ывы",
+      "element": "wind"
     },
     {
-      "id": "9b095bf5-4a7e-44d4-9030-0f06d7958b8d",
-      "name": "Иван",
-      "description": "Загадочный",
-      "element": "wind"
+      "id": "5d8708a1-4a42-4c31-9959-702eea4877ec",
+      "name": "ывы",
+      "description": "ывыв",
+      "element": "fire"
     }
   ],
   "filters": [

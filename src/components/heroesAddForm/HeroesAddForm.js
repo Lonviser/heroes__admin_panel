@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import {useHttp} from '../../hooks/http.hook';
 
 import { heroAdded } from "../heroesList/heroesSlice";
+import { useCreateHeroMutation } from "../../api/apiSlice";
+import { use } from "react";
 
 
 const HeroesAddForm = () => {
@@ -13,6 +15,8 @@ const HeroesAddForm = () => {
     const [description, setDescription] = useState('');
     const [element, setElement] = useState('');
     const {request} = useHttp();
+
+    const [createHero,{isLoading}] = useCreateHeroMutation();
     
         const handleSubmit = (e) => {
             e.preventDefault();
@@ -23,13 +27,7 @@ const HeroesAddForm = () => {
                 element
             }
 
-            request("http://localhost:3001/heroes", "POST", JSON.stringify(newHero))
-                .then(()=>{
-                    dispatch(heroAdded(newHero));
-                })
-                .catch(err => {
-                    console.error("Ошибка при добавлении героя:", err);
-                });
+            createHero(newHero).unwrap();
 
             setHeroName('');
             setDescription('');

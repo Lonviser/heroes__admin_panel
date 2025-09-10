@@ -2,18 +2,12 @@ import { thunk } from 'redux-thunk';
 import heroes from '../components/heroesList/heroesSlice';
 import filters from '../reducers/filters';
 import { configureStore } from '@reduxjs/toolkit';
-
-
-
-// const store = createStore(
-//     combineReducers({heroes, filters}),
-//     applyMiddleware(thunk)
-// );
+import { apiSlice } from '../api/apiSlice';
 
 const store = configureStore({
-    reducer: {heroes, filters},
+    reducer: {heroes, filters,[apiSlice.reducerPath]: apiSlice.reducer},
     devTools: process.env.NODE_ENV !== 'production',
-    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk)
+    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk, apiSlice.middleware)
 })
 
 export default store;
